@@ -1,0 +1,44 @@
+name: Build Shree Pathology Lab APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+
+      - name: Extract Android project
+        run: |
+          mkdir project
+          unzip -q Shree_Pathology_Lab_Android_V7-2.zip -d project
+          echo "Project extracted"
+          find project -maxdepth 3 -type f | head -100
+
+      - name: Build APK
+        working-directory: project
+        run: |
+          gradle --no-daemon assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Shree-Pathology-Lab-APK
+          path: project/**/build/outputs/apk/**/*.apk
