@@ -38,18 +38,5 @@ jobs:
           echo 'android.useAndroidX=true' >> "$PROJECT_DIR/gradle.properties"
           echo 'android.enableJetifier=true' >> "$PROJECT_DIR/gradle.properties"
 
-          echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
-          echo "Found project at: $PROJECT_DIR"
-
-      - name: Build APK
-        run: |
-          cd "$PROJECT_DIR"
-          chmod +x gradlew
-          ./gradlew --no-daemon assembleDebug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: Shree-Pathology-Lab-APK
-          path: '**/build/outputs/apk/**/*.apk'
-          if-no-files-found: error
+          echo "PROJECT_DIR=$PROJECT_DIR" >> 
+          
