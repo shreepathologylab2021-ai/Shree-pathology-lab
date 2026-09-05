@@ -31,8 +31,10 @@ jobs:
             exit 1
           fi
           PROJECT_DIR=$(dirname "$GRADLEW")
-          echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
-          echo "Found project at: $PROJECT_DIR"
+echo 'android.useAndroidX=true' >> "$PROJECT_DIR/gradle.properties"
+echo 'android.enableJetifier=true' >> "$PROJECT_DIR/gradle.properties"
+echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
+echo "Found project at: $PROJECT_DIR"
 
       - name: Build APK
         run: |
