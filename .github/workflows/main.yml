@@ -11,30 +11,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: temurin
+          distribution: 'temurin'
           java-version: '17'
 
       - name: Extract Android project
         run: |
           mkdir -p project
-          unzip -q Shree_Pathology_Lab_Android_V7-2.zip -d project
+          unzip -q Shree_Pathology_Lab_Android_V7-2.zip -d project/
           echo "Project extracted"
-          GRADLEW=$(find project -type f -name gradlew | head -1)
+          GRADLEW=$(find project -type f -name "gradlew")
           if [ -z "$GRADLEW" ]; then
             echo "gradlew not found"
             exit 1
           fi
           PROJECT_DIR=$(dirname "$GRADLEW")
-echo 'android.useAndroidX=true' >> "$PROJECT_DIR/gradle.properties"
-echo 'android.enableJetifier=true' >> "$PROJECT_DIR/gradle.properties"
-echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
-echo "Found project at: $PROJECT_DIR"
+          echo "android.useAndroidX=true" >> "$PROJECT_DIR/gradle.properties"
+          echo "android.enableJetifier=true" >> "$PROJECT_DIR/gradle.properties"
+          echo "PROJECT_DIR=$PROJECT_DIR" >> $GITHUB_ENV
+          echo "Found project at: $PROJECT_DIR"
 
       - name: Build APK
         run: |
@@ -46,6 +46,5 @@ echo "Found project at: $PROJECT_DIR"
         uses: actions/upload-artifact@v4
         with:
           name: Shree-Pathology-Lab-APK
-          path: '**/build/outputs/apk/**/*.apk'
+          path: "**/build/outputs/apk/**/*.apk"
           if-no-files-found: error
-          
