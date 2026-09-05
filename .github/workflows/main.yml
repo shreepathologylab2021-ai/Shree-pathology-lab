@@ -12,10 +12,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: Setup Java 17
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
@@ -24,37 +24,32 @@ jobs:
         run: |
           mkdir -p project
           unzip -q Shree_Pathology_Lab_Android_V7-2.zip -d project
-
           GRADLEW=$(find project -type f -name gradlew | head -1)
-
           if [ -z "$GRADLEW" ]; then
             echo "gradlew not found"
             exit 1
           fi
-
           PROJECT_DIR=$(dirname "$GRADLEW")
-
           echo 'android.useAndroidX=true' >> "$PROJECT_DIR/gradle.properties"
           echo 'android.enableJetifier=true' >> "$PROJECT_DIR/gradle.properties"
-
           echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
 
-      - name: Force Java and Kotlin JVM target to 17
+      - name: Force Java and Kotlin JVM target to 1.8
         run: |
           cat > "$RUNNER_TEMP/ci.gradle" <<'EOF'
           import org.gradle.api.tasks.compile.JavaCompile
 
           allprojects {
-              tasks.withType(JavaCompile).configureEach {
-                  sourceCompatibility = "17"
-                  targetCompatibility = "17"
-              }
+            tasks.withType(JavaCompile).configureEach {
+              sourceCompatibility = "1.8"
+              targetCompatibility = "1.8"
+            }
 
-              tasks.configureEach { task ->
-                  if (task.class.name.contains("KotlinCompile") && task.hasProperty("kotlinOptions")) {
-                      task.kotlinOptions.jvmTarget = "17"
-                  }
+            tasks.configureEach { task ->
+              if (task.class.name.contains("KotlinCompile") && task.hasProperty("kotlinOptions")) {
+                task.kotlinOptions.jvmTarget = "1.8"
               }
+            }
           }
           EOF
 
@@ -69,4 +64,4 @@ jobs:
         with:
           name: Shree-Pathology-Lab-APK
           path: '**/build/outputs/apk/**/*.apk'
-          if-no-files-found: error 
+          if-no-files-found: error
