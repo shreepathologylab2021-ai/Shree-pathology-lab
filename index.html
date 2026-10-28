@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shree Pathology Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,680&family=Outfit:wght@380;500;640&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #17211c;
+    --muted: #5d6b63;
+    --line: #d5e0d8;
+    --paper: #f3f6f2;
+    --card: #fffcf7;
+    --green: #0e6a52;
+    --green-deep: #0a4335;
+    --amber: #c45c26;
+    --rose: #9d3040;
+    --ok: #1b7a45;
+    --shadow: 0 18px 40px rgba(23, 33, 28, 0.08);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  html { background: #f3f6f2; }
+  body {
+    font-family: Outfit, "Segoe UI", sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(900px 420px at 100% -10%, #d7efe4 0%, transparent 60%),
+      radial-gradient(700px 380px at -10% 110%, #f6e2d2 0%, transparent 55%),
+      var(--paper);
+  }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  h1, h2, h3 { font-family: Fraunces, Georgia, serif; font-weight: 560; letter-spacing: -0.02em; margin: 0; }
+  .hidden { display: none !important; }
+
+  #login {
+    min-height: 100%;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+  }
+  .login-card {
+    width: min(440px, 100%);
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+    padding: 32px 28px 28px;
+  }
+  .mark {
+    width: 52px; height: 52px; border-radius: 16px;
+    background: var(--green-deep);
+    display: grid; place-items: center;
+    margin-bottom: 16px;
+  }
+  .login-card p { color: var(--muted); margin: 8px 0 22px; line-height: 1.45; }
+  label { display: block; font-size: 13px; color: var(--muted); margin: 12px 0 6px; }
+  input, select, textarea {
+    width: 100%;
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: 12px;
+    padding: 11px 12px;
+    outline: none;
+  }
+  textarea { min-height: 72px; resize: vertical; }
+  input:focus, select:focus, textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(14, 106, 82, 0.12); }
+  .btn {
+    border: 0; border-radius: 12px; padding: 11px 16px;
+    background: var(--green); color: #f6fff9; font-weight: 640;
+  }
+  .btn:hover { background: var(--green-deep); }
+  .btn.block { width: 100%; margin-top: 18px; }
+  .btn.ghost { background: transparent; color: var(--green-deep); border: 1px solid var(--line); }
+  .btn.warn { background: var(--amber); }
+  .btn.rose { background: var(--rose); }
+  .hint { margin-top: 14px; font-size: 13px; color: var(--muted); }
+  .err { color: var(--rose); min-height: 1.2em; font-size: 13px; margin-top: 8px; }
+
+  #app { min-height: 100vh; display: grid; grid-template-columns: 248px 1fr; }
+  aside {
+    background: var(--green-deep);
+    color: #e7f6ef;
+    padding: 22px 14px;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .brand { padding: 6px 10px 16px; }
+  .brand small { display: block; opacity: 0.72; font-size: 12px; margin-top: 4px; letter-spacing: 0.08em; text-transform: uppercase; }
+  nav button {
+    width: 100%; text-align: left; border: 0; background: transparent;
+    color: #e7f6ef; border-radius: 12px; padding: 10px 12px; font-weight: 500;
+  }
+  nav button.active, nav button:hover { background: rgba(255,255,255,0.1); }
+  .side-foot { margin-top: auto; padding: 12px; font-size: 13px; opacity: 0.85; }
+  .side-foot button { margin-top: 8px; background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.25); border-radius: 10px; padding: 8px 10px; }
+
+  main { padding: 22px 26px 40px; }
+  .top { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; margin-bottom: 18px; }
+  .top p { margin: 6px 0 0; color: var(--muted); }
+  .grid { display: grid; gap: 14px; }
+  .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 16px;
+    box-shadow: 0 8px 24px rgba(23, 33, 28, 0.04);
+  }
+  .stat b { display: block; font-family: Fraunces, Georgia, serif; font-size: 32px; margin-top: 6px; }
+  .stat span { color: var(--muted); font-size: 13px; }
+  .two { grid-template-columns: 1.1fr 0.9fr; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: end; }
+  .row > * { flex: 1 1 160px; }
+  .row .btn, .row button { flex: 0 0 auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 9px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 500; font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .pill { display: inline-block; border-radius: 999px; padding: 2px 8px; font-size: 12px; background: #e7f3ec; color: var(--ok); }
+  .pill.wait { background: #f8eadf; color: #8a4318; }
+  .pill.bad { background: #f8e4e6; color: var(--rose); }
+  .checks { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0 12px; }
+  .checks label { display: flex; gap: 8px; align-items: center; margin: 0; color: var(--ink); background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
+  .checks input { width: auto; }
+  .money { font-variant-numeric: tabular-nums; }
+  .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .empty { color: var(--muted); padding: 18px 4px; }
+  .barcode { font-family: ui-monospace, monospace; letter-spacing: 0.12em; font-size: 13px; }
+  .bars { height: 46px; display: flex; align-items: stretch; gap: 1px; margin-top: 6px; }
+  .bars i { display: block; background: var(--ink); width: 2px; }
+  .bars i.off { background: transparent; width: 2px; }
+  #toast {
+    position: fixed; bottom: 18px; right: 18px; background: var(--ink); color: #fff;
+    padding: 12px 14px; border-radius: 12px; box-shadow: var(--shadow); max-width: 320px;
+  }
+  #print-root { position: absolute; left: -12000px; top: 0; width: 800px; }
+  @media (max-width: 980px) {
+    #app { grid-template-columns: 1fr; }
+    aside { position: sticky; top: 0; z-index: 2; }
+    nav { display: flex; gap: 6px; overflow: auto; }
+    nav button { width: auto; white-space: nowrap; }
+    .side-foot { display: none; }
+    .stats, .two, .checks { grid-template-columns: 1fr 1fr; }
+  }
+  @media print {
+    body * { visibility: hidden; }
+    #print-root, #print-root * { visibility: visible; }
+    #print-root { left: 0; position: absolute; inset: 0; width: auto; background: #fff; padding: 24px; }
+    aside, #toast, .toolbar, .no-print { display: none !important; }
+  }
+</style>
+</head>
+<body>
+<section id="login">
+  <form class="login-card" id="login-form">
+    <div class="mark" aria-hidden="true">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <path d="M8 20c0-5 4-7 6-11 2 4 6 6 6 11a6 6 0 1 1-12 0Z" stroke="#f4fff8" stroke-width="1.8"/>
+        <path d="M14 9V4" stroke="#f4fff8" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h1>Shree Pathology Lab</h1>
+    <p>Registration, billing, samples, results, and reports for the front desk.</p>
+    <label for="user">Username</label>
+    <input id="user" autocomplete="username" required>
+    <label for="pass">Password</label>
+    <input id="pass" type="password" autocomplete="current-password" required>
+    <div class="err" id="login-err"></div>
+    <button class="btn block" type="submit">Login</button>
+    <div class="hint">Demo login: admin / admin123</div>
+  </form>
+</section>
+
+<div id="app" class="hidden">
+  <aside>
+    <div class="brand">
+      <strong>Shree Pathology</strong>
+      <small id="branch-label">Main branch</small>
+    </div>
+    <nav id="nav"></nav>
+    <div class="side-foot">
+      <div id="who"></div>
+      <button type="button" id="logout">Log out</button>
+    </div>
+  </aside>
+  <main>
+    <div class="top">
+      <div>
+        <h2 id="title">Dashboard</h2>
+        <p id="subtitle"></p>
+      </div>
+    </div>
+    <div id="view"></div>
+  </main>
+</div>
+<div id="toast" class="hidden"></div>
+<div id="print-root"></div>
+
+<script>
+const KEY = "shree-pathology-lab-v1";
+const NAV = [
+  ["dashboard", "Dashboard"],
+  ["patients", "Patient Registration"],
+  ["billing", "New Billing"],
+  ["samples", "Sample / Barcode"],
+  ["results", "Result Entry"],
+  ["reports", "Reports"],
+  ["history", "Patient History"],
+  ["doctors", "Doctors"],
+  ["tests", "Test Master"],
+  ["users", "Users & Branches"],
+  ["backup", "Backup"]
+];
+
+const seed = () => ({
+  seq: 1004,
+  session: null,
+  branchId: "b1",
+  branches: [{ id: "b1", name: "Main branch", address: "Clinic road" }],
+  users: [{ id: "u1", username: "admin", password: "admin123", role: "Admin", branchId: "b1" }],
+  doctors: [{ id: "d1", name: "Dr. Mehta", phone: "9800000000" }],
+  tests: [
+    { id: "t1", code: "CBC", name: "CBC", price: 350, unit: "", ref: "See differential", sample: "EDTA" },
+    { id: "t2", code: "LFT", name: "LFT", price: 600, unit: "", ref: "Panel", sample: "Serum" },
+    { id: "t3", code: "KFT", name: "KFT", price: 550, unit: "", ref: "Panel", sample: "Serum" },
+    { id: "t4", code: "LIPID", name: "Lipid Profile", price: 500, unit: "mg/dL", ref: "Panel", sample: "Serum" },
+    { id: "t5", code: "THY", name: "Thyroid Profile", price: 700, unit: "", ref: "Panel", sample: "Serum" },
+    { id: "t6", code: "URINE", name: "Urine Routine", price: 150, unit: "", ref: "Normal", sample: "Urine" },
+    { id: "t7", code: "HBA1C", name: "HbA1c", price: 450, unit: "%", ref: "4.0 – 5.6", sample: "EDTA" }
+  ],
+  patients: [],
+  bills: [],
+  samples: [],
+  results: []
+});
+
+let db = load();
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (!raw) return seed();
+    const parsed = JSON.parse(raw);
+    return Object.assign(seed(), parsed);
+  } catch (e) {
+    return seed();
+  }
+}
+function save() { localStorage.setItem(KEY, JSON.stringify(db)); }
+function nextId(prefix) { db.seq += 1; return prefix + db.seq; }
+function inr(n) { return "₹" + Number(n || 0).toLocaleString("en-IN"); }
+function today() { return new Date().toISOString().slice(0, 10); }
+function stamp() { return new Date().toLocaleString("en-IN", { hour12: true }); }
+
+function toast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.classList.remove("hidden");
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => el.classList.add("hidden"), 2400);
+}
+
+function el(tag, attrs, children) {
+  const node = document.createElement(tag);
+  if (attrs) Object.entries(attrs).forEach(([k, v]) => {
+    if (k === "class") node.className = v;
+    else if (k.startsWith("on") && typeof v === "function") node.addEventListener(k.slice(2).toLowerCase(), v);
+    else if (v !== null && v !== undefined) node.setAttribute(k, v);
+  });
+  (children || []).forEach(c => {
+    if (c === null || c === undefined) return;
+    node.append(c.nodeType ? c : document.createTextNode(String(c)));
+  });
+  return node;
+}
+
+function field(label, control) {
+  return el("div", null, [el("label", null, [label]), control]);
+}
+
+const $view = () => document.getElementById("view");
+function setHeader(title, subtitle) {
+  document.getElementById("title").textContent = title;
+  document.getElementById("subtitle").textContent = subtitle || "";
+}
+
+function showLogin() {
+  document.getElementById("login").classList.remove("hidden");
+  document.getElementById("app").classList.add("hidden");
+  document.getElementById("user").value = "";
+  document.getElementById("pass").value = "";
+  document.getElementById("login-err").textContent = "";
+}
+function showApp() {
+  document.getElementById("login").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+  const user = db.users.find(u => u.id === db.session);
+  const branch = db.branches.find(b => b.id === (user && user.branchId)) || db.branches[0];
+  document.getElementById("who").textContent = user ? user.username + " · " + user.role : "";
+  document.getElementById("branch-label").textContent = branch ? branch.name : "Branch";
+  renderNav(location.hash.slice(1) || "dashboard");
+}
+
+function renderNav(active) {
+  const nav = document.getElementById("nav");
+  nav.replaceChildren();
+  NAV.forEach(([id, label]) => {
+    nav.append(el("button", { type: "button", class: id === active ? "active" : "", onclick: () => { location.hash = id; } }, [label]));
+  });
+  renderSection(active);
+}
+
+function renderSection(id) {
+  const known = NAV.some(n => n[0] === id) ? id : "dashboard";
+  const view = $view();
+  view.replaceChildren();
+  const fn = {
+    dashboard: viewDashboard,
+    patients: viewPatients,
+    billing: viewBilling,
+    samples: viewSamples,
+    results: viewResults,
+    reports: viewReports,
+    history: viewHistory,
+    doctors: viewDoctors,
+    tests: viewTests,
+    users: viewUsers,
+    backup: viewBackup
+  }[known];
+  fn(view);
+}
+
+function patientName(id) {
+  const p = db.patients.find(x => x.id === id);
+  return p ? p.name : "Unknown";
+}
+function billTests(bill) {
+  return bill.testIds.map(id => db.tests.find(t => t.id === id)).filter(Boolean);
+}
+function billTotal(bill) {
+  const gross = billTests(bill).reduce((s, t) => s + Number(t.price), 0);
+  return Math.max(0, gross - Number(bill.discount || 0));
+}
+function sampleFor(billId) { return db.samples.find(s => s.billId === billId); }
+function resultsFor(billId) { return db.results.filter(r => r.billId === billId); }
+
+function viewDashboard(view) {
+  setHeader("Dashboard", "Today’s counter at a glance.");
+  const day = today();
+  const patientsToday = db.patients.filter(p => (p.createdAt || "").slice(0, 10) === day).length;
+  const pendingSamples = db.bills.filter(b => !sampleFor(b.id)).length;
+  const openResults = db.bills.filter(b => sampleFor(b.id) && resultsFor(b.id).length < b.testIds.length).length;
+  const collected = db.bills.filter(b => (b.createdAt || "").slice(0, 10) === day).reduce((s, b) => s + Number(b.paid || 0), 0);
+  const stats = el("div", { class: "grid stats" }, [
+    stat("Patients today", patientsToday),
+    stat("Samples pending", pendingSamples),
+    stat("Results open", openResults),
+    stat("Collected today", inr(collected))
+  ]);
+  const recent = el("div", { class: "card" });
+  recent.append(el("h3", null, ["Recent bills"]));
+  if (!db.bills.length) recent.append(el("div", { class: "empty" }, ["No bills yet. Register a patient, then open New Billing."]));
+  else recent.append(billTable(db.bills.slice().reverse().slice(0, 6)));
+  const actions = el("div", { class: "card" }, [
+    el("h3", null, ["Start here"]),
+    el("p", { class: "empty" }, ["Register a patient, raise a bill, collect the sample, then enter the results."]),
+    el("div", { class: "toolbar" }, [
+      el("button", { class: "btn", type: "button", onclick: () => { location.hash = "patients"; } }, ["Register patient"]),
+      el("button", { class: "btn ghost", type: "button", onclick: () => { location.hash = "billing"; } }, ["New bill"]),
+      el("button", { class: "btn ghost", type: "button", onclick: () => { location.hash = "results"; } }, ["Enter results"])
+    ])
+  ]);
+  view.append(stats, el("div", { class: "grid two", style: "margin-top:14px" }, [recent, actions]));
+}
+function stat(label, value) {
+  return el("div", { class: "card stat" }, [el("span", null, [label]), el("b", null, [value])]);
+}
+
+function viewPatients(view) {
+  setHeader("Patient Registration", "Name, age, phone, and referring doctor.");
+  const name = el("input", { required: "true", placeholder: "Full name" });
+  const age = el("input", { type: "number", min: "0", placeholder: "Age" });
+  const sex = el("select", null, ["Female", "Male", "Other"].map(s => el("option", { value: s }, [s])));
+  const phone = el("input", { placeholder: "Phone" });
+  const doctor = el("select", null, [el("option", { value: "" }, ["Walk-in"]), ...db.doctors.map(d => el("option", { value: d.id }, [d.name]))]);
+  const form = el("form", { class: "card" }, [
+    el("div", { class: "row" }, [
+      field("Patient name", name),
+      field("Age", age),
+      field("Sex", sex),
+      field("Phone", phone),
+      field("Doctor", doctor)
+    ]),
+    el("button", { class: "btn", type: "submit", style: "margin-top:12px" }, ["Save patient"])
+  ]);
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (!name.value.trim()) return;
+    db.patients.push({
+      id: nextId("p"),
+      name: name.value.trim(),
+      age: age.value,
+      sex: sex.value,
+      phone: phone.value.trim(),
+      doctorId: doctor.value,
+      createdAt: new Date().toISOString()
+    });
+    save();
+    toast("Patient saved");
+    viewPatients(view);
+  });
+  view.append(form, el("div", { class: "card", style: "margin-top:14px" }, [
+    el("h3", null, ["Registered patients"]),
+    patientTable(db.patients)
+  ]));
+}
+function patientTable(list) {
+  if (!list.length) return el("div", { class: "empty" }, ["No patients yet."]);
+  const rows = list.slice().reverse().map(p => {
+    const doc = db.doctors.find(d => d.id === p.doctorId);
+    return el("tr", null, [
+      el("td", null, [p.name]),
+      el("td", null, [p.age || "—"]),
+      el("td", null, [p.sex]),
+      el("td", null, [p.phone || "—"]),
+      el("td", null, [doc ? doc.name : "Walk-in"])
+    ]);
+  });
+  return el("table", null, [
+    el("thead", null, [el("tr", null, ["Patient", "Age", "Sex", "Phone", "Doctor"].map(h => el("th", null, [h])))]),
+    el("tbody", null, rows)
+  ]);
+}
+
+function viewBilling(view) {
+  setHeader("New Billing", "Pick a patient and the tests on this visit.");
+  if (!db.patients.length) {
+    view.append(el("div", { class: "card empty" }, ["Register a patient before billing."]));
+    return;
+  }
+  const patient = el("select", null, db.patients.map(p => el("option", { value: p.id }, [p.name + (p.phone ? " · " + p.phone : "")])));
+  const discount = el("input", { type: "number", min: "0", value: "0" });
+  const paid = el("input", { type: "number", min: "0", value: "0" });
+  const boxes = db.tests.map(t => {
+    const input = el("input", { type: "checkbox", value: t.id });
+    return el("label", null, [input, t.name + " · " + inr(t.price)]);
+  });
+  const total = el("div", { class: "money", style: "margin:8px 0 12px;font-size:18px" }, ["Total " + inr(0)]);
+  function refresh() {
+    const ids = [...view.querySelectorAll("input[type=checkbox]:checked")].map(i => i.value);
+    const gross = ids.reduce((s, id) => s + Number((db.tests.find(t => t.id === id) || {}).price || 0), 0);
+    const net = Math.max(0, gross - Number(discount.value || 0));
+    total.textContent = "Total " + inr(net) + " · tests " + ids.length;
+  }
+  boxes.forEach(b => b.querySelector("input").addEventListener("change", refresh));
+  discount.addEventListener("input", refresh);
+  const form = el("form", { class: "card" }, [
+    el("div", { class: "row" }, [field("Patient", patient), field("Discount", discount), field("Paid now", paid)]),
+    el("label", null, ["Tests"]),
+    el("div", { class: "checks" }, boxes),
+    total,
+    el("button", { class: "btn", type: "submit" }, ["Create bill"])
+  ]);
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const testIds = [...form.querySelectorAll("input[type=checkbox]:checked")].map(i => i.value);
+    if (!testIds.length) { toast("Select at least one test"); return; }
+    const bill = {
+      id: nextId("bill"),
+      billNo: "SPL-" + String(db.seq).padStart(4, "0"),
+      patientId: patient.value,
+      testIds,
+      discount: Number(discount.value || 0),
+      paid: Number(paid.value || 0),
+      createdAt: new Date().toISOString()
+    };
+    db.bills.push(bill);
+    save();
+    toast("Bill " + bill.billNo + " saved");
+    viewBilling(view);
+  });
+  view.append(form, el("div", { class: "card", style: "margin-top:14px" }, [
+    el("h3", null, ["Bills"]),
+    db.bills.length ? billTable(db.bills.slice().reverse()) : el("div", { class: "empty" }, ["No bills yet."])
+  ]));
+}
+function billTable(list) {
+  return el("table", null, [
+    el("thead", null, [el("tr", null, ["Bill", "Patient", "Tests", "Amount", "Paid", "Sample"].map(h => el("th", null, [h])))]),
+    el("tbody", null, list.map(b => {
+      const sample = sampleFor(b.id);
+      return el("tr", null, [
+        el("td", null, [b.billNo]),
+        el("td", null, [patientName(b.patientId)]),
+        el("td", null, [billTests(b).map(t => t.code).join(", ")]),
+        el("td", { class: "money" }, [inr(billTotal(b))]),
+        el("td", { class: "money" }, [inr(b.paid)]),
+        el("td", null, [el("span", { class: sample ? "pill" : "pill wait" }, [sample ? sample.barcode : "Pending"])])
+      ]);
+    }))
+  ]);
+}
+
+function bars(code) {
+  const wrap = el("div", { class: "bars", "aria-hidden": "true" });
+  const bits = Array.from(code).map(ch => ch.charCodeAt(0).toString(2).padStart(7, "0")).join("0");
+  bits.split("").forEach(bit => wrap.append(el("i", { class: bit === "1" ? "" : "off" })));
+  return wrap;
+}
+
+function viewSamples(view) {
+  setHeader("Sample / Barcode", "Mark a bill collected and print a counter barcode.");
+  const pending = db.bills.filter(b => !sampleFor(b.id));
+  const card = el("div", { class: "card" });
+  if (!pending.length) card.append(el("div", { class: "empty" }, ["Every billed visit already has a sample, or there is no bill yet."]));
+  else {
+    const pick = el("select", null, pending.map(b => el("option", { value: b.id }, [b.billNo + " · " + patientName(b.patientId)])));
+    const form = el("form", null, [
+      field("Pending bill", pick),
+      el("button", { class: "btn", type: "submit", style: "margin-top:12px" }, ["Collect sample"])
+    ]);
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const bill = db.bills.find(b => b.id === pick.value);
+      const barcode = "SPL" + today().replace(/-/g, "") + String(db.seq + 1).slice(-4);
+      db.samples.push({ id: nextId("s"), billId: bill.id, barcode, collectedAt: new Date().toISOString() });
+      save();
+      toast("Sample " + barcode + " collected");
+      viewSamples(view);
+    });
+    card.append(form);
+  }
+  const list = el("div", { class: "card", style: "margin-top:14px" }, [el("h3", null, ["Collected samples"])]);
+  if (!db.samples.length) list.append(el("div", { class: "empty" }, ["No samples collected."]));
+  else {
+    list.append(el("table", null, [
+      el("thead", null, [el("tr", null, ["Barcode", "Bill", "Patient", "When"].map(h => el("th", null, [h])))]),
+      el("tbody", null, db.samples.slice().reverse().map(s => {
+        const bill = db.bills.find(b => b.id === s.billId);
+        const cell = el("td", null, [el("div", { class: "barcode" }, [s.barcode]), bars(s.barcode)]);
+        return el("tr", null, [
+          cell,
+          el("td", null, [bill ? bill.billNo : "—"]),
+          el("td", null, [bill ? patientName(bill.patientId) : "—"]),
+          el("td", null, [new Date(s.collectedAt).toLocaleString("en-IN", { hour12: true })])
+        ]);
+      }))
+    ]));
+  }
+  view.append(card, list);
+}
+
+function viewResults(view) {
+  setHeader("Result Entry", "Enter values, then save and verify.");
+  const ready = db.bills.filter(b => sampleFor(b.id));
+  if (!ready.length) {
+    view.append(el("div", { class: "card empty" }, ["Collect a sample before result entry."]));
+    return;
+  }
+  const pick = el("select", null, ready.map(b => el("option", { value: b.id }, [b.billNo + " · " + patientName(b.patientId)])));
+  const holder = el("div");
+  function draw() {
+    holder.replaceChildren();
+    const bill = db.bills.find(b => b.id === pick.value);
+    const existing = resultsFor(bill.id);
+    const inputs = billTests(bill).map(t => {
+      const prev = existing.find(r => r.testId === t.id);
+      const value = el("input", { placeholder: t.name + " result", value: prev ? prev.value : "" });
+      return { t, value, row: el("div", { class: "row" }, [
+        field(t.name + (t.unit ? " (" + t.unit + ")" : ""), value),
+        el("div", null, [el("label", null, ["Reference"]), el("div", { style: "padding:11px 0;color:var(--muted)" }, [t.ref || "—"])])
+      ]) };
+    });
+    const form = el("form", null, [
+      ...inputs.map(i => i.row),
+      el("button", { class: "btn", type: "submit", style: "margin-top:8px" }, ["Save & Verify"])
+    ]);
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      db.results = db.results.filter(r => r.billId !== bill.id);
+      inputs.forEach(({ t, value }) => {
+        if (!value.value.trim()) return;
+        db.results.push({
+          id: nextId("r"),
+          billId: bill.id,
+          testId: t.id,
+          value: value.value.trim(),
+          verified: true,
+          at: new Date().toISOString()
+        });
+      });
+      save();
+      toast("Results saved and sent for verification");
+      draw();
+    });
+    const done = existing.filter(r => r.verified).length;
+    holder.append(el("p", { style: "color:var(--muted)" }, [done ? done + " verified value" + (done === 1 ? "" : "s") + " on this bill." : "No values saved yet."]), form);
+  }
+  pick.addEventListener("change", draw);
+  view.append(el("div", { class: "card" }, [field("Patient / Bill No.", pick), holder]));
+  draw();
+}
+
+function reportNode(bill) {
+  const patient = db.patients.find(p => p.id === bill.patientId);
+  const doc = patient && db.doctors.find(d => d.id === patient.doctorId);
+  const sample = sampleFor(bill.id);
+  const rows = billTests(bill).map(t => {
+    const res = db.results.find(r => r.billId === bill.id && r.testId === t.id);
+    return el("tr", null, [
+      el("td", null, [t.name]),
+      el("td", null, [res ? res.value : "—"]),
+      el("td", null, [t.unit || "—"]),
+      el("td", null, [t.ref || "—"]),
+      el("td", null, [res && res.verified ? "Verified" : "Pending"])
+    ]);
+  });
+  return el("article", { class: "card", style: "margin-bottom:14px" }, [
+    el("h3", null, ["Shree Pathology Lab"]),
+    el("p", null, ["Report " + bill.billNo + " · " + stamp()]),
+    el("p", null, [
+      (patient ? patient.name : "Patient") +
+      (patient && patient.age ? ", " + patient.age + "y" : "") +
+      (patient ? " · " + patient.sex : "") +
+      (doc ? " · " + doc.name : "")
+    ]),
+    el("p", { class: "barcode" }, [sample ? "Sample " + sample.barcode : "Sample pending"]),
+    el("table", null, [
+      el("thead", null, [el("tr", null, ["Test", "Result", "Unit", "Reference", "Status"].map(h => el("th", null, [h])))]),
+      el("tbody", null, rows)
+    ]),
+    el("p", { class: "money" }, ["Bill " + inr(billTotal(bill)) + " · Paid " + inr(bill.paid)])
+  ]);
+}
+
+function viewReports(view) {
+  setHeader("Reports", "Open a verified report or print the page.");
+  if (!db.bills.length) {
+    view.append(el("div", { class: "card empty" }, ["Create a bill to print a report."]));
+    return;
+  }
+  const pick = el("select", null, db.bills.map(b => el("option", { value: b.id }, [b.billNo + " · " + patientName(b.patientId)])));
+  const slot = el("div", { id: "report-slot", style: "margin-top:14px" });
+  function draw() {
+    const bill = db.bills.find(b => b.id === pick.value);
+    const node = reportNode(bill);
+    slot.replaceChildren(node);
+    document.getElementById("print-root").replaceChildren(node.cloneNode(true));
+  }
+  pick.addEventListener("change", draw);
+  view.append(el("div", { class: "toolbar no-print" }, [
+    pick,
+    el("button", { class: "btn", type: "button", onclick: () => window.print() }, ["Print report"])
+  ]), slot);
+  draw();
+}
+
+function viewHistory(view) {
+  setHeader("Patient History", "Bills and verified results for one patient.");
+  if (!db.patients.length) {
+    view.append(el("div", { class: "card empty" }, ["No patients registered."]));
+    return;
+  }
+  const pick = el("select", null, db.patients.map(p => el("option", { value: p.id }, [p.name])));
+  const slot = el("div", { style: "margin-top:14px" });
+  function draw() {
+    const bills = db.bills.filter(b => b.patientId === pick.value);
+    slot.replaceChildren();
+    if (!bills.length) slot.append(el("div", { class: "card empty" }, ["No visits for this patient."]));
+    else bills.slice().reverse().forEach(b => slot.append(reportNode(b)));
+  }
+  pick.addEventListener("change", draw);
+  view.append(el("div", { class: "card" }, [field("Patient", pick)]), slot);
+  draw();
+}
+
+function viewDoctors(view) {
+  setHeader("Doctors", "Referring doctors used on registration.");
+  const name = el("input", { placeholder: "Doctor name", required: "true" });
+  const phone = el("input", { placeholder: "Phone" });
+  const form = el("form", { class: "card" }, [
+    el("div", { class: "row" }, [field("Name", name), field("Phone", phone)]),
+    el("button", { class: "btn", type: "submit", style: "margin-top:12px" }, ["Add doctor"])
+  ]);
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    db.doctors.push({ id: nextId("d"), name: name.value.trim(), phone: phone.value.trim() });
+    save();
+    toast("Doctor added");
+    viewDoctors(view);
+  });
+  const table = el("table", null, [
+    el("thead", null, [el("tr", null, ["Name", "Phone", ""].map(h => el("th", null, [h])))]),
+    el("tbody", null, db.doctors.map(d => el("tr", null, [
+      el("td", null, [d.name]),
+      el("td", null, [d.phone || "—"]),
+      el("td", null, [el("button", { class: "btn ghost", type: "button", onclick: () => {
+        db.doctors = db.doctors.filter(x => x.id !== d.id);
+        save();
+        viewDoctors(view);
+      } }, ["Remove"])])
+    ])))
+  ]);
+  view.append(form, el("div", { class: "card", style: "margin-top:14px" }, [table]));
+}
+
+function viewTests(view) {
+  setHeader("Test Master", "Catalogue, price, unit, and reference.");
+  const name = el("input", { placeholder: "Test name", required: "true" });
+  const code = el("input", { placeholder: "Code" });
+  const price = el("input", { type: "number", min: "0", value: "0" });
+  const unit = el("input", { placeholder: "Unit" });
+  const ref = el("input", { placeholder: "Reference range" });
+  const sample = el("input", { placeholder: "Sample type" });
+  const form = el("form", { class: "card" }, [
+    el("div", { class: "row" }, [
+      field("Name", name), field("Code", code), field("Price", price), field("Unit", unit), field("Reference", ref), field("Sample", sample)
+    ]),
+    el("button", { class: "btn", type: "submit", style: "margin-top:12px" }, ["Add test"])
+  ]);
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    db.tests.push({
+      id: nextId("t"),
+      code: (code.value || name.value).trim().toUpperCase().slice(0, 8),
+      name: name.value.trim(),
+      price: Number(price.value || 0),
+      unit: unit.value.trim(),
+      ref: ref.value.trim(),
+      sample: sample.value.trim()
+    });
+    save();
+    toast("Test added");
+    viewTests(view);
+  });
+  const table = el("table", null, [
+    el("thead", null, [el("tr", null, ["Code", "Test", "Price", "Unit", "Reference", "Sample"].map(h => el("th", null, [h])))]),
+    el("tbody", null, db.tests.map(t => el("tr", null, [
+      el("td", null, [t.code]),
+      el("td", null, [t.name]),
+      el("td", { class: "money" }, [inr(t.price)]),
+      el("td", null, [t.unit || "—"]),
+      el("td", null, [t.ref || "—"]),
+      el("td", null, [t.sample || "—"])
+    ])))
+  ]);
+  view.append(form, el("div", { class: "card", style: "margin-top:14px" }, [table]));
+}
+
+function viewUsers(view) {
+  setHeader("Users & Branches", "Desk logins stay in this browser.");
+  const bName = el("input", { placeholder: "Branch name", required: "true" });
+  const bAddr = el("input", { placeholder: "Address" });
+  const branchForm = el("form", { class: "card" }, [
+    el("h3", null, ["Branch"]),
+    el("div", { class: "row" }, [field("Name", bName), field("Address", bAddr)]),
+    el("button", { class: "btn", type: "submit", style: "margin-top:12px" }, ["Add branch"])
+  ]);
+  branchForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    db.branches.push({ id: nextId("b"), name: bName.value.trim(), address: bAddr.value.trim() });
+    save();
+    toast("Branch added");
+    viewUsers(view);
+  });
+  const uName = el("input", { placeholder: "Username", required: "true" });
+  const uPass = el("input", { placeholder: "Password", required: "true" });
+  const uRole = el("select", null, ["Admin", "Reception", "Technician"].map(r => el("option", { value: r }, [r])));
+  const uBranch = el("select", null, db.branches.map(b => el("option", { value: b.id }, [b.name])));
+  const userForm = el("form", { class: "card", style: "margin-top:14px" }, [
+    el("h3", null, ["User"]),
+    el("div", { class: "row" }, [field("Username", uName), field("Password", uPass), field("Role", uRole), field("Branch", uBranch)]),
+    el("button", { class: "btn", type: "submit", style: "margin-top:12px" }, ["Add user"])
+  ]);
+  userForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (db.users.some(u => u.username === uName.value.trim())) { toast("Username already exists"); return; }
+    db.users.push({ id: nextId("u"), username: uName.value.trim(), password: uPass.value, role: uRole.value, branchId: uBranch.value });
+    save();
+    toast("User added");
+    viewUsers(view);
+  });
+  const branches = el("ul", null, db.branches.map(b => el("li", null, [b.name + (b.address ? " — " + b.address : "")])));
+  const users = el("table", null, [
+    el("thead", null, [el("tr", null, ["User", "Role", "Branch"].map(h => el("th", null, [h])))]),
+    el("tbody", null, db.users.map(u => {
+      const b = db.branches.find(x => x.id === u.branchId);
+      return el("tr", null, [el("td", null, [u.username]), el("td", null, [u.role]), el("td", null, [b ? b.name : "—"])]);
+    }))
+  ]);
+  view.append(branchForm, userForm, el("div", { class: "grid two", style: "margin-top:14px" }, [
+    el("div", { class: "card" }, [el("h3", null, ["Branches"]), branches]),
+    el("div", { class: "card" }, [el("h3", null, ["Users"]), users])
+  ]));
+}
+
+function viewBackup(view) {
+  setHeader("Backup", "Download this browser’s lab data, or restore a file.");
+  const file = el("input", { type: "file", accept: "application/json" });
+  const card = el("div", { class: "card" }, [
+    el("p", null, ["Patients, bills, samples, results, doctors, tests, users, and branches are stored locally."]),
+    el("div", { class: "toolbar", style: "margin-top:12px" }, [
+      el("button", { class: "btn", type: "button", onclick: downloadBackup }, ["Download backup"]),
+      file,
+      el("button", { class: "btn warn", type: "button", onclick: () => restoreBackup(file) }, ["Restore"]),
+      el("button", { class: "btn rose", type: "button", onclick: resetData }, ["Clear this browser"])
+    ])
+  ]);
+  view.append(card);
+}
+function downloadBackup() {
+  const blob = new Blob([JSON.stringify(db, null, 2)], { type: "application/json" });
+  const a = el("a", { href: URL.createObjectURL(blob), download: "shree-pathology-backup.json" });
+  a.click();
+  toast("Backup downloaded");
+}
+function restoreBackup(file) {
+  const f = file.files && file.files[0];
+  if (!f) { toast("Choose a backup file"); return; }
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const parsed = JSON.parse(String(reader.result));
+      if (!parsed.users || !parsed.tests) throw new Error("bad");
+      db = Object.assign(seed(), parsed);
+      db.session = null;
+      save();
+      toast("Backup restored. Log in again.");
+      showLogin();
+    } catch (e) {
+      toast("That file is not a lab backup");
+    }
+  };
+  reader.readAsText(f);
+}
+function resetData() {
+  if (!confirm("Clear all lab data in this browser?")) return;
+  db = seed();
+  save();
+  toast("Data cleared");
+  showLogin();
+}
+
+document.getElementById("login-form").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const username = document.getElementById("user").value.trim();
+  const password = document.getElementById("pass").value;
+  const user = db.users.find(u => u.username === username && u.password === password);
+  const err = document.getElementById("login-err");
+  if (!user) {
+    err.textContent = "Invalid login";
+    return;
+  }
+  err.textContent = "";
+  db.session = user.id;
+  save();
+  location.hash = "dashboard";
+  showApp();
+});
+document.getElementById("logout").addEventListener("click", () => {
+  db.session = null;
+  save();
+  showLogin();
+});
+window.addEventListener("hashchange", () => {
+  if (!db.session) return;
+  renderNav(location.hash.slice(1) || "dashboard");
+});
+
+if (db.session && db.users.some(u => u.id === db.session)) showApp();
+else showLogin();
+</script>
+</body>
+</html>
