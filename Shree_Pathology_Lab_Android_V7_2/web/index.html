@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0d6e6e" />
+  <title>Shree Pathology Lab — V7</title>
+  <style>
+    :root {
+      --bg: #f0f4f8;
+      --surface: #ffffff;
+      --primary: #0d6e6e;
+      --primary-dark: #094f4f;
+      --accent: #e8f5f5;
+      --text: #1a2b3c;
+      --muted: #5c6b7a;
+      --danger: #c62828;
+      --radius: 12px;
+      --shadow: 0 4px 20px rgba(13, 110, 110, 0.12);
+      --font: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Devanagari", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      font-family: var(--font);
+      background: linear-gradient(165deg, var(--accent) 0%, var(--bg) 45%);
+      color: var(--text);
+    }
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom);
+      display: flex;
+      flex-direction: column;
+    }
+    .screen { display: none; flex: 1; flex-direction: column; animation: fade 0.25s ease; }
+    .screen.active { display: flex; }
+    @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    .brand {
+      text-align: center;
+      padding: 48px 0 28px;
+    }
+    .brand h1 {
+      margin: 0;
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      letter-spacing: -0.02em;
+    }
+    .brand p {
+      margin: 8px 0 0;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px 20px;
+    }
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      border: 1px solid #d0dce6;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+    input:focus {
+      outline: 2px solid var(--primary);
+      outline-offset: 1px;
+      border-color: var(--primary);
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 14px 18px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: transform 0.1s, background 0.15s;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      margin-top: 12px;
+    }
+    .hint {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 20px;
+    }
+    .screen-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 20px 0 16px;
+    }
+    .screen-header h2 {
+      margin: 0;
+      font-size: 1.35rem;
+      flex: 1;
+    }
+    .icon-btn {
+      width: 44px;
+      height: 44px;
+      border: none;
+      border-radius: 10px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      font-size: 1.25rem;
+      line-height: 1;
+      color: var(--primary-dark);
+    }
+    .menu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-bottom: 24px;
+    }
+    .menu-list .btn {
+      text-align: left;
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      border: 1px solid #e8eef3;
+    }
+    .menu-list .btn:hover {
+      border-color: var(--primary);
+      background: var(--accent);
+    }
+    .scroll-body {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .result-fields { margin-top: 8px; }
+    .result-fields input { margin-bottom: 12px; }
+    #toast {
+      position: fixed;
+      left: 50%;
+      bottom: calc(24px + env(safe-area-inset-bottom));
+      transform: translateX(-50%) translateY(120%);
+      background: #323232;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      max-width: calc(100% - 40px);
+      text-align: center;
+      z-index: 1000;
+      transition: transform 0.3s ease;
+      pointer-events: none;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+    .badge {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      background: var(--primary);
+      color: #fff;
+      padding: 4px 8px;
+      border-radius: 6px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <section id="screen-login" class="screen active" aria-label="Login">
+      <div class="brand">
+        <h1>Shree Pathology Lab</h1>
+        <p>Android V7 — Web</p>
+      </div>
+      <div class="card">
+        <label for="username">Username</label>
+        <input id="username" type="text" name="username" autocomplete="username" placeholder="Username" />
+        <label for="password">Password</label>
+        <input id="password" type="password" name="password" autocomplete="current-password" placeholder="Password" />
+        <button type="button" class="btn btn-primary" id="btn-login">Login</button>
+      </div>
+      <p class="hint">Demo: admin / admin123</p>
+    </section>
+
+    <section id="screen-dashboard" class="screen" aria-label="Dashboard">
+      <div class="screen-header">
+        <h2>Dashboard</h2>
+        <button type="button" class="icon-btn" id="btn-logout" title="Logout" aria-label="Logout">⎋</button>
+      </div>
+      <div class="scroll-body menu-list" id="dashboard-menu"></div>
+    </section>
+
+    <section id="screen-result" class="screen" aria-label="Result Entry">
+      <div class="screen-header">
+        <button type="button" class="icon-btn" id="btn-back" title="Back" aria-label="Back">←</button>
+        <h2>Result Entry</h2>
+      </div>
+      <div class="scroll-body card">
+        <label for="patient-bill">Patient / Bill No.</label>
+        <input id="patient-bill" type="text" placeholder="Patient / Bill No." />
+        <div class="result-fields" id="result-fields"></div>
+        <button type="button" class="btn btn-primary" id="btn-save">Save &amp; Verify</button>
+      </div>
+    </section>
+  </div>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const TESTS = [
+      "CBC",
+      "LFT",
+      "KFT",
+      "Lipid Profile",
+      "Thyroid Profile",
+      "Urine Routine",
+      "HbA1c",
+    ];
+
+    const MENU_ITEMS = [
+      "Patient Registration",
+      "New Billing",
+      "Sample / Barcode",
+      "Result Entry",
+      "Reports",
+      "Patient History",
+      "Doctors",
+      "Test Master",
+      "Users & Branches",
+      "Backup",
+    ];
+
+    const screens = {
+      login: document.getElementById("screen-login"),
+      dashboard: document.getElementById("screen-dashboard"),
+      result: document.getElementById("screen-result"),
+    };
+
+    let toastTimer;
+
+    function showScreen(name) {
+      Object.values(screens).forEach((el) => el.classList.remove("active"));
+      screens[name].classList.add("active");
+    }
+
+    function toast(message) {
+      const el = document.getElementById("toast");
+      el.textContent = message;
+      el.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove("show"), 2800);
+    }
+
+    function openSection(name) {
+      if (name === "Result Entry") {
+        showScreen("result");
+        return;
+      }
+      toast(name + " module ready in V7 starter");
+    }
+
+    function buildDashboard() {
+      const container = document.getElementById("dashboard-menu");
+      container.innerHTML = "";
+      MENU_ITEMS.forEach((label) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "btn";
+        btn.textContent = label;
+        btn.addEventListener("click", () => openSection(label));
+        container.appendChild(btn);
+      });
+    }
+
+    function buildResultFields() {
+      const container = document.getElementById("result-fields");
+      container.innerHTML = "";
+      TESTS.forEach((test) => {
+        const id = "result-" + test.replace(/\s+/g, "-").toLowerCase();
+        const label = document.createElement("label");
+        label.setAttribute("for", id);
+        label.textContent = test + " result";
+        const input = document.createElement("input");
+        input.type = "text";
+        input.id = id;
+        input.placeholder = test + " result";
+        input.dataset.test = test;
+        container.appendChild(label);
+        container.appendChild(input);
+      });
+    }
+
+    document.getElementById("btn-login").addEventListener("click", () => {
+      const u = document.getElementById("username").value.trim();
+      const p = document.getElementById("password").value;
+      if (u === "admin" && p === "admin123") {
+        showScreen("dashboard");
+      } else {
+        toast("Invalid login");
+      }
+    });
+
+    document.getElementById("password").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") document.getElementById("btn-login").click();
+    });
+
+    document.getElementById("btn-logout").addEventListener("click", () => {
+      document.getElementById("password").value = "";
+      showScreen("login");
+    });
+
+    document.getElementById("btn-back").addEventListener("click", () => showScreen("dashboard"));
+
+    document.getElementById("btn-save").addEventListener("click", () => {
+      toast("Results saved and sent for verification");
+    });
+
+    buildDashboard();
+    buildResultFields();
+  </script>
+</body>
+</html>
